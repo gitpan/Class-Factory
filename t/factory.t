@@ -1,7 +1,7 @@
 # -*-perl-*-
 
 use strict;
-use Test::More  tests => 23;
+use Test::More  tests => 24;
 
 use lib qw( ./t ./lib );
 
@@ -19,50 +19,52 @@ my $country_genre = 'COUNTRY';
 
     # Set the ISA of our two bands to the one we're testing now
 
-    @MyRockBand::ISA = qw( MySimpleBand );
+    @MyRockBand::ISA    = qw( MySimpleBand );
     @MyCountryBand::ISA = qw( MySimpleBand );
 
-    my $factory_map = MySimpleBand->get_factory_map;
-    is( ref( $factory_map ), 'HASH', 'Return of get_factory_map()' );
-    is( scalar keys %{ $factory_map }, 1, 'Keys in factory map' );
-    is( $factory_map->{rock},    'MyRockBand',    'Simple type added' );
+    my @loaded_classes = MySimpleBand->get_loaded_classes;
+    is( scalar @loaded_classes, 1, 'Number of classes loaded so far' );
+    is( $loaded_classes[0], 'MyRockBand', 'Default class added' );
 
-    my $register_map = MySimpleBand->get_register_map;
-    is( ref( $register_map ), 'HASH', 'Return of get_register_map()' );
-    is( scalar keys %{ $register_map }, 1, 'Keys in register map' );
-    is( $register_map->{country}, 'MyCountryBand', 'Simple type registered' );
+    my @loaded_types = MySimpleBand->get_loaded_types;
+    is( scalar @loaded_types, 1, 'Number of types loaded so far' );
+    is( $loaded_types[0], 'rock', 'Default type added' );
+
+    my @registered_classes = MySimpleBand->get_registered_classes;
+    is( scalar @registered_classes, 1, 'Number of classes registered so far' );
+    is( $registered_classes[0], 'MyCountryBand', 'Default class registered' );
+
+    my @registered_types = MySimpleBand->get_registered_types;
+    is( scalar @registered_types, 1, 'Number of types registered so far' );
+    is( $registered_types[0], 'country', 'Default type registered' );
 
     my $rock = MySimpleBand->new( 'rock', { band_name => $rock_band } );
-    is( ref( $rock ), 'MyRockBand', 'Simple added object returned' );
-    is( $rock->band_name(), $rock_band, 'Simple added super init parameter set' );
-    is( $rock->genre(), $rock_genre, 'Simple added self init parameter set' );
+    is( ref( $rock ), 'MyRockBand', 'Type of added object returned' );
+    is( $rock->band_name(), $rock_band,
+        'Added object type super init parameter set' );
+    is( $rock->genre(), $rock_genre,
+        'Added object type self init parameter set' );
 
     my $country = MySimpleBand->new( 'country', { band_name => $country_band } );
-    is( ref( $country ), 'MyCountryBand', 'Simple registered object returned' );
-    is( $country->band_name(), $country_band, 'Simple registered object super init parameter set' );
-    is( $country->genre(), $country_genre, 'Simple registered object self init parameter set' );
-}
+    is( ref( $country ), 'MyCountryBand', 'Type of registered object returned' );
+    is( $country->band_name(), $country_band,
+        'Registered object type super init parameter set' );
+    is( $country->genre(), $country_genre,
+        'Registered object type self init parameter set' );
 
-# Next the flexible settting
+    my @loaded_classes_new = MySimpleBand->get_loaded_classes;
+    is( scalar @loaded_classes_new, 2, 'Classes loaded after all used' );
+    is( $loaded_classes_new[0], 'MyCountryBand', 'Default registered class now loaded' );
+    is( $loaded_classes_new[1], 'MyRockBand', 'Default added class still loaded' );
 
-{
-    require_ok( 'MyFlexibleBand' );
+    my @loaded_types_new = MySimpleBand->get_loaded_types;
+    is( scalar @loaded_types_new, 2, 'Types loaded after all used' );
+    is( $loaded_types_new[0], 'country', 'Default registered type now loaded' );
+    is( $loaded_types_new[1], 'rock', 'Default added type still loaded' );
 
-    # Set the ISA of our two bands to the one we're testing now
+    is( MySimpleBand->get_factory_class( 'country' ), 'MyCountryBand',
+        'Proper class returned for registered type' );
+    is( MySimpleBand->get_factory_class( 'rock' ), 'MyRockBand',
+        'Proper class returned for added type' );
 
-    @MyRockBand::ISA = qw( MyFlexibleBand );
-    @MyCountryBand::ISA = qw( MyFlexibleBand );
-
-    is( MyFlexibleBand->get_factory_type( 'rock' ),    'MyRockBand',    'Flexible type added' );
-    is( MyFlexibleBand->get_register_type( 'country' ), 'MyCountryBand', 'Flexible type registered' );
-
-    my $rock = MyFlexibleBand->new( 'rock', { band_name => $rock_band } );
-    is( ref( $rock ), 'MyRockBand', 'Flexible added object returned' );
-    is( $rock->band_name(), $rock_band, 'Flexible added object super init parameter set' );
-    is( $rock->genre(), $rock_genre, 'Flexible added object self init parameter set' );
-
-    my $country = MyFlexibleBand->new( 'country', { band_name => $country_band } );
-    is( ref( $country ), 'MyCountryBand', 'Flexible registered object returned' );
-    is( $country->band_name(), $country_band, 'Flexible registered object super init parameter set' );
-    is( $country->genre(), $country_genre, 'Flexible registered object self init parameter set' );
 }
