@@ -1,6 +1,6 @@
 package MyFlexibleBand;
 
-# $Id: MyFlexibleBand.pm,v 1.1 2002/01/28 17:19:18 cwinters Exp $
+# $Id: MyFlexibleBand.pm,v 1.3 2002/02/10 17:41:10 cwinters Exp $
 
 use strict;
 use base qw( Class::Factory );
@@ -8,6 +8,10 @@ use base qw( Class::Factory );
 my %TYPES = ();
 sub get_factory_type { return $TYPES{ $_[1] } }
 sub set_factory_type { return $TYPES{ $_[1] } = $_[2] }
+
+my %REGISTER = ();
+sub get_register_type { return $REGISTER{ $_[1] } }
+sub set_register_type { return $REGISTER{ $_[1] } = $_[2] }
 
 sub init {
     my ( $self, $params ) = @_;
@@ -29,7 +33,7 @@ sub genre {
 }
 
 MyFlexibleBand->add_factory_type( rock    => 'MyRockBand' );
-MyFlexibleBand->add_factory_type( country => 'MyCountryBand' );
+MyFlexibleBand->register_factory_type( country => 'MyCountryBand' );
 
 1;
 

@@ -1,6 +1,6 @@
 package MySimpleBand;
 
-# $Id: MySimpleBand.pm,v 1.1 2002/01/28 17:19:18 cwinters Exp $
+# $Id: MySimpleBand.pm,v 1.3 2002/02/10 17:41:10 cwinters Exp $
 
 use strict;
 use base qw( Class::Factory );
@@ -8,8 +8,10 @@ use base qw( Class::Factory );
 #use Class::Factory;
 #@MySimpleBand::ISA = qw( Class::Factory );
 
-my %TYPES = ();
-sub get_factory_map { return \%TYPES }
+my %TYPES    = ();
+my %REGISTER = ();
+sub get_factory_map  { return \%TYPES }
+sub get_register_map { return \%REGISTER }
 
 sub init {
     my ( $self, $params ) = @_;
@@ -31,7 +33,7 @@ sub genre {
 }
 
 MySimpleBand->add_factory_type( rock    => 'MyRockBand' );
-MySimpleBand->add_factory_type( country => 'MyCountryBand' );
+MySimpleBand->register_factory_type( country => 'MyCountryBand' );
 
 1;
 
