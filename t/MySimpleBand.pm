@@ -1,6 +1,6 @@
 package MySimpleBand;
 
-# $Id: MySimpleBand.pm,v 1.5 2004/10/13 02:00:44 cwinters Exp $
+# $Id: MySimpleBand.pm 35 2004-10-13 02:00:44Z cwinters $
 
 use strict;
 use base qw( Class::Factory );

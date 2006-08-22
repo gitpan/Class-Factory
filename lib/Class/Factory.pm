@@ -1,10 +1,10 @@
 package Class::Factory;
 
-# $Id: Factory.pm,v 1.15 2004/10/14 14:13:46 cwinters Exp $
+# $Id: Factory.pm 40 2006-08-02 05:51:40Z cwinters $
 
 use strict;
 
-$Class::Factory::VERSION = '1.03';
+$Class::Factory::VERSION = '1.04';
 
 my %CLASS_BY_FACTORY_AND_TYPE  = ();
 my %FACTORY_INFO_BY_CLASS      = ();
